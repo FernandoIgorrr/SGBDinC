@@ -14,12 +14,13 @@ void main(){
 	
 	command[11] =	'\0';
 	i			=	strcmp(command,"quit");
+	
 	while(i){
 		
 		printf("SGBD>");	
 		scanf("%s",&command);
 		
-		i			=	strcmp(command,"quit");
+		i		=	strcmp(command,"quit");
 		
 	}
 }
