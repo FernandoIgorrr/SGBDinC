@@ -1,27 +1,25 @@
+#include "man.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 
+
 void main(){
 	
-	char comando[10];
+	man();
 	
-	System("cls");
-	do{
-			scanf("%s",&comando);
+	char	command[10];
+	int		i;	
+	
+	command[11] =	'\0';
+	i			=	strcmp(command,"quit");
+	while(i){
 		
-	}while(!strcmp(comando,"quit"));
-
-		printf("#################################################################");
-		printf("#						Esse é um SGBD em C						#");
-		printf("#################################################################");
-		printf("#								Manual							#");
-		printf("#################################################################");
-		printf("#################################################################");
-		printf("#																#");
-		printf("#create table <nome da tabela> - Cria uma tabela com o nome dado#");
-		printf("#																#");
-		printf("#################################################################");
-
+		printf("SGBD>");	
+		scanf("%s",&command);
+		
+		i			=	strcmp(command,"quit");
+		
+	}
 }
