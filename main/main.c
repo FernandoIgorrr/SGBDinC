@@ -17,12 +17,12 @@ void main(){
 	while(i){
 		j++;
 		setbuf(stdin, NULL);
-		printf("(%d)->",j);	
+		printf("->");	
 		scanf("%[^\n]s",&command);
 		setbuf(stdin, NULL);
 		
 		k = getCommand(command);
-		printf("\n\nRETURN %d\n\n",k);	
+		//printf("\n\nRETURN %d\n\n",k);	
 		i		=	strcmp(command,"quit");
 		
 	}
