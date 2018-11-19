@@ -1,0 +1,4 @@
+Fernando
+3
+string	-	char	-	int
+name	-	sexo	-	id

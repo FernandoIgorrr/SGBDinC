@@ -145,20 +145,20 @@ char *generatorText(char *name,char **names,char *type,char **types,int numField
 	
 		int i;
 		char *text,*aux;
+		char cprimaryKey[2];
 		
 		text	= malloc(sizeof(char)*strlen(name)+1+sizeof(char)*2*6*numFields+sizeof(char)*30*numFields);
 		aux		= malloc(sizeof(char)*6+2);
+		snprintf(cprimaryKey,2,"%d",primaryKey);
 		
 		strcpy(text,name);
 		strcat(text,"\n");
-		
+		strcat(text,cprimaryKey);
+		strcat(text,"\n");
 		for(i = 0;i < numFields;i++){
 
 			strcpy(aux,types[i]);
 			
-			if((primaryKey-1) == i){
-				strcat(aux,"(P)");
-			}
 			if(i == (numFields-1)){
 				strcat(aux,"\n");
 			}
@@ -256,7 +256,6 @@ int numTables(void){
 	
     dir = opendir("..\\tables\\");
 
-    //Conta todos os arquivos e diretórios dentro do diretório
     while ((lsdir = readdir(dir)) != NULL){	
 		cont++;
     }
@@ -303,18 +302,19 @@ char **getTables(){
 	return tables;
 }
 char **getTableFields(char *table){
-	FILE *file
-}
-int insertData(char *table){
 	
-	FILE *file;
-	char **types,**names,*local;
+	char *local,fields[100];
 	int mlc	= strlen(table)+14;
 	local	= malloc(mlc*sizeof(char));
+	local	= generatorLocal(table);
 	
-	*file = fopen(local,"r+");
+	FILE *file = fopen(local,"r+");
 	
-	printf();
-	scanf("%[^\n]s",);
-	
+	while(!(feof(file))){
+		fgets(fields,100,file);	
+		printf("%s",fields);
+	}
+}
+int insertData(char *table){
+		
 }
