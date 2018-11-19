@@ -28,6 +28,15 @@ int executeCommand(char command[][30],int tam){
 				return -9;
 			}
 		}
+		else if(strcmp(command[0],"insert") == 0){
+			int boolean = validateTable(command[1]);
+			if(boolean == 1){
+					insertData(command[1]);
+			}
+			else{
+				return 0;
+			}
+		}
 		else{
 			return -7;
 		}
@@ -41,76 +50,81 @@ int createTable(char *name){
 	FILE *file;
 	char **types,**names,type[6],nameField[30];
 	
-	printf("->Digite o número de campos da sua tabela:");
-	scanf("%d",&k);
+	if(validateTable(name)){
+			return 0;
+	}
+	else{
 	
-	types 		=	(char **)malloc(k*sizeof(char *));
-	names		=	(char **)malloc(k*sizeof(char *)); 
+		printf("->Digite o número de campos da sua tabela:");
+		scanf("%d",&k);
 	
-	for(i = 0;i < k;i++){
+		types 		=	(char **)malloc(k*sizeof(char *));
+		names		=	(char **)malloc(k*sizeof(char *)); 
 	
-		setbuf(stdin, NULL);
-		printf("Digite o tipo do campo %d:\n",i+1);
-		scanf("%[^\n]s",&type);
+		for(i = 0;i < k;i++){
 	
-		if(validateType(type)){
-			
 			setbuf(stdin, NULL);
-			printf("Digite o nome do campo %d:\n",i+1);
-			scanf("%[^\n]s",&nameField);
+			printf("Digite o tipo do campo %d:\n",i+1);
+			scanf("%[^\n]s",&type);
+	
+			if(validateType(type)){
 			
-			if(validateName(nameField,names,i)){
-				
-				types[i]	=	(char *)malloc(6*sizeof(char)); 
-				names[i]	=	(char *)malloc(30*sizeof(char)); 
-				
-				strcpy(types[i],type);
-				strcpy(names[i],nameField);
+				setbuf(stdin, NULL);
+				printf("Digite o nome do campo %d:\n",i+1);
+				scanf("%[^\n]s",&nameField);
 			
+				if(validateName(nameField,names,i)){
+				
+					types[i]	=	(char *)malloc(6*sizeof(char)); 
+					names[i]	=	(char *)malloc(30*sizeof(char)); 
+				
+					strcpy(types[i],type);
+					strcpy(names[i],nameField);
+			
+				}
+				else{
+					i--;
+				}
 			}
 			else{
 				i--;
 			}
 		}
-		else{
-			i--;
-		}
-	}
-	while(close != 1){
-		printf("Digite o índice do campo para ser primary-key:\n");
-		scanf("%d",&p);
+		while(close != 1){
+			printf("Digite o índice do campo para ser primary-key:\n");
+			scanf("%d",&p);
 		
-		if(p == 0){
-			validate		=	0;
-			close			=	1;
-		}
-		else{
-			if(validatePrimarykey(types,p)){
-				validate	=	1;
-				close 		=	1;
+			if(p == 0){
+				validate		=	0;
+				close			=	1;
 			}
 			else{
-				validate	=	0;
-				close		=	0;
+				if(validatePrimarykey(types,p)){
+				validate	=	1;
+				close 		=	1;
+				}
+				else{
+					validate	=	0;
+					close		=	0;
+				}
 			}
 		}
-	}
-	if(validate){
-		file = fopen(generatorLocal(name),"w");
-		fprintf(file,generatorText(name,names,type,types,k,p));
-		fclose(file);
-	}
-	else{
-		i = 0;
-	}
+		if(validate){
+			file = fopen(generatorLocal(name),"w");
+			fprintf(file,generatorText(name,names,type,types,k,p));
+			fclose(file);
+		}
+		else{
+			i = 0;
+		}
 	
-
-	if(i == k){
-		return 1;
+		if(i == k){
+			return 1;
+		}
+		else{
+			return 0;
+		}
 	}
-	else{
-		return 0;
-	}	
 }
 
 char *generatorLocal(char *name){
@@ -139,16 +153,13 @@ char *generatorText(char *name,char **names,char *type,char **types,int numField
 		strcat(text,"\n");
 		
 		for(i = 0;i < numFields;i++){
+
 			strcpy(aux,types[i]);
 			
 			if((primaryKey-1) == i){
 				strcat(aux,"(P)");
 			}
-			if(i == 0){
-				strcat(aux,"\t-\t");
-				
-			}
-			else if(i == (numFields-1)){
+			if(i == (numFields-1)){
 				strcat(aux,"\n");
 			}
 			else{
@@ -159,11 +170,7 @@ char *generatorText(char *name,char **names,char *type,char **types,int numField
 		
 		for(i = 0;i < numFields;i++){
 			strcpy(aux,names[i]);
-			if(i == 0){
-				strcat(aux,"\t-\t");
-				
-			}
-			else if(i == (numFields-1)){
+			if(i == (numFields-1)){
 				strcat(aux,"\n");
 			}
 			else{
@@ -222,33 +229,92 @@ int validatePrimarykey(char **types,int primaryKey){
 	
 }
 
-void showTables(void){
+int validateTable(char *table){
+	
+	char **tables;
+	int	i,b,n	= numTables();
+	tables	= getTables();
+	
+	for(i = 0;i < n;i++){
+		if(strcmp(table,tables[i]) == 0){
+			return 1;
+		}
+		else{
+			b = 0;	
+		}
+	}
+	if(b == 0){
+		return 0;
+	}
+	
+}
+int numTables(void){
 	
 	DIR *dir;
     struct dirent *lsdir;
-	char *table;
-	int i,tam,cont = 0;
+	int cont = -2;
 	
     dir = opendir("..\\tables\\");
 
-    //Imprimi todos os arquivos e diretórios dentro do diretório
-	printf("\nTabelas:\n");
-    while ((lsdir = readdir(dir)) != NULL ){
+    //Conta todos os arquivos e diretórios dentro do diretório
+    while ((lsdir = readdir(dir)) != NULL){	
 		cont++;
-		tam = strlen(lsdir->d_name) - 4;
-		if(cont > 2){
-			table =	malloc(sizeof(char)*tam);
-			for(i = 0;i < tam;i++){
-				table[i] = lsdir->d_name[i];
-			}
-		}
-		else{
-			table = malloc(sizeof(char)*(strlen(lsdir->d_name)));
-			strcpy(table,lsdir->d_name);
-		}
-		table[tam] = '\0';
-        printf ("%s\n",table);
     }
     closedir(dir);
+	return cont;
+}
 
+void showTables(void){
+	
+	char **tables	= getTables();
+	int i,n			= numTables();
+	
+	for(i = 0;i < n;i++){
+		printf("%s\n",tables[i]);
+	}
+}
+char **getTables(){
+	
+	DIR *dir;
+    struct dirent *lsdir;
+	char **tables;
+	int n,tam,indice = 0;
+	
+    dir 	= opendir("..\\tables\\");
+	n		= numTables();
+	tables 	= (char **)malloc(n*sizeof(char *));
+	
+	while((lsdir = readdir(dir)) != NULL){
+		
+		if(indice > 1){
+			
+			tam = strlen(lsdir->d_name) - 4;
+			
+			lsdir->d_name[tam] = '\0';
+			
+			tables[indice-2]	= malloc(tam*sizeof(char));
+			
+			strcpy(tables[indice-2],lsdir->d_name);
+		
+		}
+		indice++;
+	}
+	closedir(dir);
+	return tables;
+}
+char **getTableFields(char *table){
+	FILE *file
+}
+int insertData(char *table){
+	
+	FILE *file;
+	char **types,**names,*local;
+	int mlc	= strlen(table)+14;
+	local	= malloc(mlc*sizeof(char));
+	
+	*file = fopen(local,"r+");
+	
+	printf();
+	scanf("%[^\n]s",);
+	
 }

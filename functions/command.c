@@ -34,13 +34,21 @@ int getCommand(char *command){
 			return executeCommand(cmd,j);
 		}
 		else if(j == 1){
-			char cmd[2][30];
 			
-			for(i = 0;i < 4;i++){
-				cmd[0][i] = command[i];
+			char cmd[2][30];
+			int c = 0;
+	
+			for(i = 0;i < tam;i++){
+				if(command[i] == ' '){
+						break;
+				}
+				else{
+					cmd[0][i]		=  command[i];
+					c++;
+				}
 			}
-			for(i = 0;i < 6;i++){
-				cmd[1][i] = command[i+5];
+			for(i = (tam - (c+2));i < tam;i++){
+				cmd[1][i-(tam - (c+2))]	= command[i];	
 			}
 			return executeCommand(cmd,j);
 		}

@@ -1,17 +1,25 @@
 #ifndef DATABASE_H_INCLUDED
 #define DATABASE_H_INCLUDED
 
-typedef struct T_table{
-	
-	char name[30];
-	
-	
-}table; 
+//Função que retorna os tipos dos campos da tabela especificada
+char **getTableFields(char *table);
 
-//Fnção que valida se o campo pode ser primary-key ou não
+//Função que insere novos dados na tabela especificada
+int insertData(char *table);
+
+//Função que conta o número de tabelas salvas
+int numTables(void);
+
+//Função que válida se a tabela a qual o usuário irá fazer a inserção de dados existe 
+int validateTable(char *table);
+
+//Função que valida se o campo pode ser primary-key ou não
 int validatePrimarykey(char **types,int p);
 
-//Fnção que mostra todas as tabelas já criadas
+//Função que mostra todas as tabelas já criadas
+char **getTables(void);
+
+//Função que mostra todas as tabelas já criadas
 void showTables(void);
 
 //Função que gera a string do local e o nome do arquivo
