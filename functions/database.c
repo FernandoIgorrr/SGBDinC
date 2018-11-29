@@ -42,6 +42,7 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 					for(i = 0;i < numFields;i++){
 						printf("%s \t|",structTable[1][i]);
 					}
+					printf("\n");
 				}
 				else{
 					printf("Tabela não encontrada!\n");
@@ -49,7 +50,7 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 			}
 		}
 		else if(strcmp(command[0],"insert") == 0){
-			if(validateNametable(command[1]) == 0)
+			if(validateNametable(command[1]) == 0 && validateExisttable(command[1]) == 0){
 				insertData(command[1]);
 			}
 			else{
@@ -58,14 +59,21 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 			}
 		}
 		else if(strcmp(command[0],"select") == 0){
+
 			if(validateNametable(command[1]) == 0){
 				int i, j, k;
 				char ***datas;
 				datas		= getDatastable(command[1]);
+				printf("%d\n",getNumtables()); 
 
-				for(i = 0; i < getNumregs(command[1]);i++){
-					for(j = 0;j < getNumfields(command[1]);j++){
+				if(getNumregs(command[1]) == 0){
+					printf("Não há registros salvos na tabela!\n");
+				}
+				else{
+					for(i = 0; i < getNumregs(command[1]);i++){
+						for(j = 0;j < getNumfields(command[1]);j++){
 
+						}
 					}
 				}
 			}
@@ -90,7 +98,6 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 	else{
 		return -333;
 	}
-
 }
 
 int createTable(char *nameTable){
@@ -298,15 +305,15 @@ char **getTables(){
 
 	char	**tables;
 	struct	dirent **namelist;
-	int 	i, j, tam, n;
+	int 	i, j, tam, numTables;
 
-	n = scandir("..//tables//", &namelist, 0, alphasort);
-	if (n < 0){
+	numTables = scandir("..//tables//", &namelist, 0, alphasort);
+	if (numTables < 0){
 		perror("scandir");
 	}
 	else{
-		tables = (char **)malloc((n-2)*sizeof(char *));
-		for(i = 2; i < n;i++){
+		tables = (char **)malloc((numTables-2)*sizeof(char *));
+		for(i = 2; i < numTables;i++){
 			tam			= strlen(namelist[i]->d_name) - 4;
 			tables[i-2]	= (char *)malloc(tam*sizeof(char));
 			for(j = 0;j < tam;j++){
@@ -319,20 +326,60 @@ char **getTables(){
 	return tables;
 
 }
+char **getTablesdata(){
+
+	char	**tablesData;
+	struct	dirent **namelist;
+	int 	i, j, tam, numTablesdata;
+
+	numTablesdata = scandir("..//datas//", &namelist, 0, alphasort);
+	if (numTablesdata < 0){
+		perror("scandir");
+	}
+	else{
+		tablesData = (char **)malloc((numTablesdata-2)*sizeof(char *));
+		for(i = 2; i < numTablesdata;i++){
+			tam			= strlen(namelist[i]->d_name) - 4;
+			tablesData[i-2]	= (char *)malloc(tam*sizeof(char));
+			for(j = 0;j < tam;j++){
+				tablesData[i-2][j] = namelist[i]->d_name[j];
+			}
+			tablesData[i-2][j] = '\0';
+		}
+	}
+
+	return tablesData;
+
+}
 
 int getNumtables(){
 
 	struct	dirent **namelist;
-	int n = scandir("..//tables//", &namelist, 0, alphasort);
-	
-	if (n < 0){
+
+	int numTables = scandir("..//tables//", &namelist, 0, alphasort);
+
+	if (numTables < 0){
 		perror("scandir");
 	}
 	else{
-		return n-2;
+		return numTables-2;
 	}
-
 }
+
+int getNumtablesdata(){
+
+	struct	dirent **namelist;
+
+	int numTablesdata = scandir("..//datas//", &namelist, 0, alphasort);
+
+	if (numTablesdata < 0){
+		perror("scandir");
+	}
+	else{
+		return (numTablesdata-2)/2;
+	}
+}
+
 
 int getNumfields(char *nameTable){
 	
@@ -617,19 +664,43 @@ void showTables(){
 
 }
 
-int validateNametable(char *name){
+int validateNametable(char *nameTable){
 
-	int i, n;
+	int i, numTables;
 
-	n	= getNumtables();
+	numTables	= getNumtables();
 
-	for(i = 0;i < n;i++){
-		if(strcmp(name,getTables()[i]) == 0){
-			return 0;
+	if(numTables <= 0){
+		return -1;
+	}
+	else{
+		for(i = 0;i < numTables;i++){
+			if(strcmp(nameTable,getTables()[i]) == 0){
+				return 0;
+			}
 		}
 	}
 	return 1;
 
+}
+
+int validateExisttable(char *nameTable){
+
+	int i, numTablesdata;
+
+	numTablesdata	= getNumtablesdata();
+
+	if(numTablesdata <= 0){
+		return -1;
+	}
+	else{
+		for(i = 0;i < numTablesdata;i++){
+			if(strcmp(nameTable,getTablesdata()[i]) == 0){
+				return 0;
+			}
+		}
+	}
+	return 1;
 }
 
 int validateNamefield(char **names,char *name,int tam){

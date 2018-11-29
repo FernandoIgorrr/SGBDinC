@@ -9,11 +9,16 @@ typedef struct Tuple_t{
 
 }tuple;
 
+int validateExisttable(char *nameTable);
+
 //Função que conta o número de registros de uma tabela
 int getNumregs(char *nameTable);
 
 //Função que pega todos os registros em uma tabela
 char ***getDatastable(char *nameTable);
+
+//Função que pega o nomes das tabelas que guardam os dados
+char **getTablesdata();
 
 //Função que valida se a chave primária já existe 
 int validatePrimaryKey(char *nameTable,unsigned primaryKey);
