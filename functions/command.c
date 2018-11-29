@@ -5,62 +5,74 @@
 #include <string.h>
 
 int getCommand(char *command){
-
-	int i,j,tam = strlen(command);
 	
-	for(i = 0;i < tam;i++){
+	int i, j, k, quantidadeEspacos, tamanho, diferenca; 
+
+
+	tamanho				= strlen(command);
+	quantidadeEspacos	= 0;
+
+
+	for(i = 0;i < tamanho;i++){
 		if(command[i] == ' '){
+			quantidadeEspacos++;
+		}
+	}
+	if(quantidadeEspacos == 0){
+		char cmd[1][30];
+		
+		strcpy(cmd[0],command);
+		executeCommand(cmd,quantidadeEspacos);
+	}
+	else if(quantidadeEspacos == 1){
+		char cmd[2][30];
+		i = 0;
+		
+		while(command[i] != ' '){
+			cmd[0][i] = command[i];
+			i++;
+		}
+		cmd[0][i]	= '\0';
+		i++;
+		j = 0;
+		while(command[i] != '\0'){
+			cmd[1][j] = command[i];
+			i++;
 			j++;
 		}
+		cmd[1][j] = '\0';
+		executeCommand(cmd,quantidadeEspacos);
 	}
-	if(tam - 13 > 30){
-		return -1;
+	else if(quantidadeEspacos == 2){
+		char cmd[3][30];
+		i = 0;
+		while(command[i] != ' '){
+			cmd[0][i] = command[i];
+			i++;
+		}
+		cmd[0][i]	= '\0';
+		j = 0;
+		i++;
+		while(command[i] != ' '){
+			cmd[1][j] = command[i];
+			i++;
+			j++;
+		}
+		cmd[1][j]	= '\0';
+		k = 0;
+		i++;
+		while(command[i] != '\0'){
+			cmd[2][k] = command[i];
+			i++;
+			k++;
+		}
+		cmd[2][k] = '\0';
+		executeCommand(cmd,quantidadeEspacos);
 	}
 	else{
-		if(j == 2){
-			char cmd[3][30];
-			char *cmd2 = cmd[1];
-			char *cmd3 = cmd[2];
-			
-			for(i = 0;i < 6;i++){
-				cmd[0][i]	=	command[i];
-			}	
-			for(i = 0;i < 5;i++){
-				cmd[1][i]	=	command[7+i]; 
-			}	
-			for(i = 0;i < (tam-(13));i++){
-				cmd[2][i]	=	command[13+i]; 
-			}
-			return executeCommand(cmd,j);
-		}
-		else if(j == 1){
-			
-			char cmd[2][30];
-			int c = 0;
-	
-			for(i = 0;i < tam;i++){
-				if(command[i] == ' '){
-						break;
-				}
-				else{
-					cmd[0][i]		=  command[i];
-					c++;
-				}
-			}
-			for(i = (tam - (c+2));i < tam;i++){
-				cmd[1][i-(tam - (c+2))]	= command[i];	
-			}
-			return executeCommand(cmd,j);
-		}
-		else if(j == 0){
-			char cmd[1][30];
-			strcpy(cmd[0],command);
-			return executeCommand(cmd,j);
-		}
-		else{
-			return 0;
-		}	
+		return 0;
 	}
+
 }
 char *errorHandling(int error){
 	

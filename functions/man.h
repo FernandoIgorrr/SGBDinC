@@ -3,5 +3,7 @@
 
 void man(void);
 
+void clear(void);
+
 
 #endif
