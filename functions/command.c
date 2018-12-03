@@ -6,7 +6,7 @@
 
 int getCommand(char *command){
 	
-	int i, j, k, quantidadeEspacos, tamanho, diferenca; 
+	int i, j, k, quantidadeEspacos, tamanho; 
 
 
 	tamanho				= strlen(command);
@@ -18,6 +18,7 @@ int getCommand(char *command){
 			quantidadeEspacos++;
 		}
 	}
+
 	if(quantidadeEspacos == 0){
 		char cmd[1][30];
 		
@@ -26,48 +27,55 @@ int getCommand(char *command){
 	}
 	else if(quantidadeEspacos == 1){
 		char cmd[2][30];
-		i = 0;
-		
-		while(command[i] != ' '){
-			cmd[0][i] = command[i];
-			i++;
+		k = 0;
+		for(i = 0; i < 2;i++){
+			for(j = 0; j < strlen(command);j++){
+				if(command[k] != ' '){
+					cmd[i][j] = command[k];
+				}
+				else{
+					cmd[i][j] = '\0';
+					j = strlen(command);
+				}
+				k++;
+			}
 		}
-		cmd[0][i]	= '\0';
-		i++;
-		j = 0;
-		while(command[i] != '\0'){
-			cmd[1][j] = command[i];
-			i++;
-			j++;
-		}
-		cmd[1][j] = '\0';
 		executeCommand(cmd,quantidadeEspacos);
 	}
 	else if(quantidadeEspacos == 2){
 		char cmd[3][30];
-		i = 0;
-		while(command[i] != ' '){
-			cmd[0][i] = command[i];
-			i++;
-		}
-		cmd[0][i]	= '\0';
-		j = 0;
-		i++;
-		while(command[i] != ' '){
-			cmd[1][j] = command[i];
-			i++;
-			j++;
-		}
-		cmd[1][j]	= '\0';
 		k = 0;
-		i++;
-		while(command[i] != '\0'){
-			cmd[2][k] = command[i];
-			i++;
-			k++;
+		for(i = 0; i < 3;i++){
+			for(j = 0; j < strlen(command);j++){
+				if(command[k] != ' '){
+					cmd[i][j] = command[k];
+				}
+				else{
+					cmd[i][j] = '\0';
+					j = strlen(command);
+				}
+				k++;
+			}
 		}
-		cmd[2][k] = '\0';
 		executeCommand(cmd,quantidadeEspacos);
+	}
+	else if(quantidadeEspacos == 3){
+		char cmd[4][30];
+		k = 0;
+		for(i = 0; i < 4;i++){
+			for(j = 0; j < strlen(command);j++){
+				if(command[k] != ' '){
+					cmd[i][j] = command[k];
+				}
+				else{
+					cmd[i][j] = '\0';
+					j = strlen(command);
+				}
+				k++;
+			}
+		}
+		executeCommand(cmd,quantidadeEspacos);
+
 	}
 	else{
 		return 0;

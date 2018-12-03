@@ -1,5 +1,0 @@
-Fernando
-5
-1
-int+string+char+float+double
-is+name+sexo+nota+media

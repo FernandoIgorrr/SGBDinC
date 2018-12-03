@@ -26,23 +26,9 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 			else{
 				if(validateNametable(command[1]) == 0){				
 
-					int i, numFields;
-					char ***structTable;
-
-					numFields		= getNumfields(command[1]);
-					structTable 	= getStructtable(command[1]);
-
-
 					printf("Nome da tabela: %s\n",command[1]);
 					printf("Estrutura:\n");
-					for(i = 0;i < numFields;i++){
-						printf("%s \t|",structTable[0][i]);
-					}
-					printf("\n");
-					for(i = 0;i < numFields;i++){
-						printf("%s \t|",structTable[1][i]);
-					}
-					printf("\n");
+					showLines(command[1],0,NULL,NULL,NULL);
 				}
 				else{
 					printf("Tabela não encontrada!\n");
@@ -61,20 +47,12 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 		else if(strcmp(command[0],"select") == 0){
 
 			if(validateNametable(command[1]) == 0){
-				int i, j, k;
-				char ***datas;
-				datas		= getDatastable(command[1]);
-				printf("%d\n",getNumtables()); 
 
 				if(getNumregs(command[1]) == 0){
 					printf("Não há registros salvos na tabela!\n");
 				}
 				else{
-					for(i = 0; i < getNumregs(command[1]);i++){
-						for(j = 0;j < getNumfields(command[1]);j++){
-
-						}
-					}
+					showLines(command[1],1,NULL,NULL,NULL);
 				}
 			}
 			else{
@@ -88,11 +66,29 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 				createTable(command[2]);
 			}
 			else{
-				return -1003;
+				printf("Você não quiz dizer \"create table\"?\n");
 			}
 		}
 		else{
-			return -1002;
+			printf("Comando não encontrado\n");
+		}
+	}
+	else if(quantidadeEspacos == 3){
+		if(strcmp(command[0],"search") == 0){
+			if(validateNametable(command[1]) == 0){
+				if(existeNamefield(command[1],command[2])){
+					showLines(command[1],2,command[2],command[3],NULL);
+				}
+				else{
+					printf("Não existe essa coluna na Tabela %s.\n",command[1]);
+				}
+			}
+			else{
+				printf("Tabela não encontrada!\n");
+			}
+		}
+		else{
+			printf("Comando não encontrado\n");
 		}
 	}
 	else{
@@ -518,21 +514,16 @@ char ***getDatastable(char *nameTable){
 	numRegs 	= getNumregs(nameTable);
 	numFields 	= getNumfields(nameTable);
 
-	while(fgets(line, BUFSIZ, file) != NULL){
-		numRegs++;
-	}
-
-	datas 	= (char ***)malloc(numRegs*sizeof(char));
+	datas 	= (char ***)malloc(numRegs*sizeof(char **));
 
 	for(i = 0;i < numRegs;i++){
 		datas[i] = (char **)malloc(numFields*sizeof(char *));
 		for(j = 0;j < numFields;j++){
-			datas[i][j] = (char *)malloc(100*sizeof(char));
+			datas[i][j] = (char *)malloc(200*sizeof(char));
 		}
 	}
-
 	file  		= fopen(local,"r");
-	i = 0;
+	i 			= 0;
 
 	while(fgets(line, BUFSIZ, file) != NULL){
 		k = 0;
@@ -552,6 +543,94 @@ char ***getDatastable(char *nameTable){
 	}
 	return datas;
 
+}
+
+char ***getSearchtable(char *nameTable,char *nameField, char *value, char *option){
+
+	char ***datas, ***structTable, ***datasFiltered;
+	int i, j, k, numRegs, numField, numFields, cont;
+
+
+	datas 			= getDatastable(nameTable);
+	structTable 	= getStructtable(nameTable); 
+	numRegs 		= getNumregs(nameTable);
+	numField 		= getNumfieldname(nameTable,nameField);
+	numFields 		= getNumfields(nameTable);
+	cont 			= 0;
+
+	if(option == NULL){
+
+		for(i = 0;i < numRegs;i++){
+			if(strcmp(value,datas[i][numField]) == 0){
+				cont++;
+			}
+		}
+
+		datasFiltered 	= (char ***)malloc(cont*sizeof(char **));
+
+		for(i = 0;i < cont;i++){
+			datas[i]  	= (char **)malloc(numFields*sizeof(char *));
+		}
+
+		for(i = 0;i < cont;i++){
+			for(j = 0;j < numFields;j++){
+				datas[i][j]  	= malloc(100*sizeof(char));
+			}
+		}
+		printf("ATE AQUI FUNFA\n");
+		k =	0;
+		for(i = 0;i < numRegs;i++){
+			if(strcmp(value,datas[i][numField]) == 0){
+				for(j = 0;j < numFields;j++){
+					strcpy(datasFiltered[k][j],datas[i][j]);
+				}
+				k++;
+			}
+		}
+		printf("ATE AQUI FUNFA\n");
+		return datasFiltered;
+	}
+
+}
+
+int getNumregsFiltered(char *nameTable,char *nameField, char *value, char *option){
+
+	char ***datas;
+	int i, numRegs, numField, cont;
+
+
+	datas 			= getDatastable(nameTable);
+	numRegs 		= getNumregs(nameTable);
+	numField 		= getNumfieldname(nameTable,nameField);
+	cont 			= 0;
+
+	if(option == NULL){
+
+		for(i = 0;i < numRegs;i++){
+			if(strcmp(value,datas[i][numField]) == 0){
+				cont++;
+			}
+		}
+	}
+
+	return cont;
+
+}
+
+int getNumfieldname(char *nameTable, char *nameField){
+
+	char ***structTable;
+	int i, numFields;
+
+	numFields 		= getNumfields(nameTable);
+	structTable 	= getStructtable(nameTable);
+
+	for(i = 0;i < numFields;i++){
+		if(strcmp(nameField,structTable[1][i]) == 0){
+			return i;
+		}
+	}
+	return -1;
 }
 
 int getNumfieldPrimaryKey(char *nameTable){
@@ -579,6 +658,47 @@ int getNumfieldPrimaryKey(char *nameTable){
 		printf("Tabela não encontrada!\n");
 	}
 
+}
+
+int getBiggestfieldname(char *nameTable){
+
+	char ***structTable;
+	int i, numFields, higher;
+
+	structTable 	= getStructtable(nameTable);
+	numFields 		= getNumfields(nameTable);
+
+	higher 			= 0;
+	for(i = 0;i < numFields;i++){
+
+		if(strlen(structTable[1][i]) > higher){
+			higher = strlen(structTable[1][i]);
+		}
+	}
+	return higher;
+
+}
+
+int getBiggestvalue(char *nameTable){
+
+	char ***dataTable;
+	int i, j, numFields, numRegs, higher;
+
+	dataTable 		= getDatastable(nameTable);
+	numFields 		= getNumfields(nameTable);
+	numRegs 		= getNumregs(nameTable);
+
+	higher 			= 0;
+
+	for(i = 0;i < numRegs;i++){
+		for(j = 0;j < numFields;j++){
+			if(strlen(dataTable[i][j]) > higher){
+				higher = strlen(dataTable[i][j]);
+			}
+		}
+	}
+	return higher;
+	
 }
 
 int insertData(char *nameTable){
@@ -662,6 +782,56 @@ void showTables(){
 		printf("%s\n",getTables()[i]);
 	}
 
+}
+
+void showLines(char *nameTable,int type,char *nameField,char *value,char *option){
+
+	int i, j, numFields, numRegs, higher, len;
+	char ***regsORstruct;
+
+	numFields		= getNumfields(nameTable);
+
+	if(type == 0){
+
+		regsORstruct 	= getStructtable(nameTable);
+		higher 			= getBiggestfieldname(nameTable);
+		numRegs 		= 2;
+	}
+	else if(type == 1){
+
+		regsORstruct 	= getDatastable(nameTable);
+		higher 			= getBiggestvalue(nameTable);
+		numRegs 		= getNumregs(nameTable);
+	}
+	else if(type == 2){
+
+		regsORstruct 	= getSearchtable(nameTable,nameField,value,NULL);
+		higher 			= getBiggestvalue(nameTable);
+		numRegs 		= getNumregsFiltered(nameTable,nameField,value,NULL);
+	}
+
+	for(i = 0;i < numRegs;i++){
+
+		for(j = 0;j < numFields*higher + numFields;j++){
+			printf("_");
+		}
+		printf("\n");
+		printf("|");
+
+		for(j = 0;j < numFields;j++){
+			printf("%s",regsORstruct[i][j]);
+			len 	= strlen(regsORstruct[i][j]);
+			for(len = strlen(regsORstruct[i][j]); len < higher;len++){
+				printf(" ");
+			}
+			printf("|");
+		}
+		printf("\n");
+		for(j = 0;j < numFields*higher + numFields;j++){
+			printf("¯");
+		}
+		printf("\n");
+	}
 }
 
 int validateNametable(char *nameTable){
@@ -784,6 +954,24 @@ int validatePrimaryKey(char *nameTable,unsigned primaryKey){
 	}
 	fclose(file);
 	return 1;
+
+}
+
+int existeNamefield(char *nameTable, char *nameField){
+
+	char ***structTable;
+	int i, numFields;
+
+	numFields 	= getNumfields(nameTable);
+	structTable = getStructtable(nameTable);
+
+	for (i = 0;i < numFields;i++){
+		if(strcmp(nameField,structTable[1][i]) == 0){
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 int countDigits(int num){

@@ -9,6 +9,21 @@ typedef struct Tuple_t{
 
 }tuple;
 
+
+int getNumregsFiltered(char *nameTable,char *nameField, char *value, char *option);
+
+int getNumfieldname(char *nameTable, char *nameField);
+
+char ***getSearchtable(char *nameTable,char *nameField, char *value, char *option);
+
+int existeNamefield(char *nameTable, char *nameField);
+
+void showLines(char *nameTable,int type,char *nameField,char *value,char *option);
+
+int getBiggestvalue(char *nameTable);
+
+int getBiggestfieldname(char *nameTable);
+
 int validateExisttable(char *nameTable);
 
 //Função que conta o número de registros de uma tabela
