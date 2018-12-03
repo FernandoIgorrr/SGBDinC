@@ -18,7 +18,7 @@ void man(void){
 	printf("#	show <nome da tabela> 					- Mostra a estrutura da tabela			 #\n");
 	printf("#	insert <nome da tabela>	        			- Insere dados na tabela especificada		 #\n");
 	printf("#	select <nome da tabela>	        			- Mostra os dados da tabela especificada 	 #\n");
-	printf("#	delete <nome da tabela> <chave primária do registro>	- Mostra os dados da tabela especificada 	 #\n");
+	printf("#	delete <nome da tabela> <chave primária do registro>	- Deleta o registro da tabela especificada 	 #\n");
 	printf("#	search <nome da tabela> <nome da coluna> (>,>=,<,<=,~)	- Mostra os dados da tabela filtrados 		 #\n");
 	printf("#	clear							- Limpa a tela do sistema			 #\n");
 	printf("#	quit							- Sair do sistema				 #\n");
