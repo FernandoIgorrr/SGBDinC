@@ -69,6 +69,20 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 				printf("Você não quiz dizer \"create table\"?\n");
 			}
 		}
+		else if(strcmp(command[0],"delete") == 0){
+			if(validateNametable(command[1]) == 0){
+				unsigned primaryKey 	= atoi(command[2]);
+				if(validatePrimaryKey(command[1],primaryKey) == 0){
+					deleteReg(command[1],command[2]);
+				}
+				else{
+					printf("O valor não foi encontrado!\n");
+				}
+			}	
+			else{	
+				printf("Tabela não encontrada!\n");
+			}
+		}
 		else{
 			printf("Comando não encontrado\n");
 		}
@@ -80,7 +94,7 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 					showLines(command[1],2,command[2],command[3],NULL);
 				}
 				else{
-					printf("Não existe essa coluna na Tabela %s.\n",command[1]);
+					printf("Não existe essa coluna na tabela %s.\n",command[1]);
 				}
 			}
 			else{
@@ -88,12 +102,46 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 			}
 		}
 		else{
-			printf("Comando não encontrado\n");
+			printf("Comando não encontrado!\n");
+		}
+	}
+	else if(quantidadeEspacos == 4){
+		if(strcmp(command[0],"search") == 0){
+			if(validateNametable(command[1]) == 0){
+				if(existeNamefield(command[1],command[2])){
+					if(validateSymbol(command[4])){
+						if(validateSearch(command[1],command[2],command[4])){
+							if(validateValue(command[3],validateSearch(command[1],command[2],command[4]))){
+								showLines(command[1],3,command[2],command[3],command[4]);
+							}
+							else{
+								printf("O tipo da pesquisa é invalido!\n");
+							}
+						}
+						else{
+							printf("O tipo da pesquisa é inválido!\n");
+						}
+					}
+					else{
+						printf("O tipo da pesquisa é inválido!\n");
+					}
+				}
+				else{
+					printf("Não existe essa coluna na tabela %s.\n",command[1]);
+				}
+			}
+			else{
+				printf("Tabela não encontrada!\n");
+			}
+		}
+		else{
+			printf("COmando não encontrado!\n");
 		}
 	}
 	else{
 		return -333;
 	}
+
 }
 
 int createTable(char *nameTable){
@@ -545,11 +593,10 @@ char ***getDatastable(char *nameTable){
 
 }
 
-char ***getSearchtable(char *nameTable,char *nameField, char *value, char *option){
+char ***getSearchtable(char *nameTable,char *nameField, char *value, char *symbol){
 
 	char ***datas, ***structTable, ***datasFiltered;
-	int i, j, k, numRegs, numField, numFields, cont;
-
+	int i, j, k, l, numRegs, numField, numFields, cont;
 
 	datas 			= getDatastable(nameTable);
 	structTable 	= getStructtable(nameTable); 
@@ -558,7 +605,7 @@ char ***getSearchtable(char *nameTable,char *nameField, char *value, char *optio
 	numFields 		= getNumfields(nameTable);
 	cont 			= 0;
 
-	if(option == NULL){
+	if(symbol == NULL){
 
 		for(i = 0;i < numRegs;i++){
 			if(strcmp(value,datas[i][numField]) == 0){
@@ -566,49 +613,370 @@ char ***getSearchtable(char *nameTable,char *nameField, char *value, char *optio
 			}
 		}
 
-		datasFiltered 	= (char ***)malloc(cont*sizeof(char **));
+		if(cont > 0){
 
-		for(i = 0;i < cont;i++){
-			datas[i]  	= (char **)malloc(numFields*sizeof(char *));
-		}
+			datasFiltered 	= (char ***)malloc(cont*sizeof(char **));
 
-		for(i = 0;i < cont;i++){
-			for(j = 0;j < numFields;j++){
-				datas[i][j]  	= malloc(100*sizeof(char));
+			for(i = 0;i < cont;i++){
+				datasFiltered[i]  	= (char **)malloc(numFields*sizeof(char *));
 			}
-		}
-		printf("ATE AQUI FUNFA\n");
-		k =	0;
-		for(i = 0;i < numRegs;i++){
-			if(strcmp(value,datas[i][numField]) == 0){
+
+			for(i = 0;i < cont;i++){
 				for(j = 0;j < numFields;j++){
-					strcpy(datasFiltered[k][j],datas[i][j]);
+					datasFiltered[i][j]  	= (char *)malloc(100*sizeof(char));
 				}
-				k++;
 			}
+	
+			k =	0;
+
+			for(i = 0;i < numRegs;i++){
+				if(strcmp(value,datas[i][numField]) == 0){
+					for(j = 0;j < numFields;j++){
+						strcpy(datasFiltered[k][j],datas[i][j]);
+					}
+					k++;
+				}
+			}
+			return datasFiltered;
 		}
-		printf("ATE AQUI FUNFA\n");
-		return datasFiltered;
+		else{
+			printf("-------\n");
+			printf("Não existem valores iguais a %s na coluna %s da tabela %s.\n",value,nameField,nameTable);
+			printf("-------\n");
+		}
+
 	}
 
+	else{
+		if(validateSearch(nameTable,nameField,symbol) == 1){
+
+			for(i = 0;i < numRegs;i++){
+				if(strstr(datas[i][numField],value) != NULL){
+					cont++;
+				}
+			}
+
+			if(cont > 0){
+
+				datasFiltered 	= (char ***)malloc(cont*sizeof(char **));
+
+				for(i = 0;i < cont;i++){
+					datasFiltered[i]  	= (char **)malloc(numFields*sizeof(char *));
+				}
+
+				for(i = 0;i < cont;i++){
+					for(j = 0;j < numFields;j++){
+						datasFiltered[i][j]  	= (char *)malloc(100*sizeof(char));
+					}
+				}
+	
+				k =	0;
+
+				for(i = 0;i < numRegs;i++){
+					if(strstr(datas[i][numField],value) != NULL){
+						for(j = 0;j < numFields;j++){
+							strcpy(datasFiltered[k][j],datas[i][j]);
+						}
+						k++;
+					}
+				}
+				return datasFiltered;
+			}
+			else{
+				printf("Não existem registros parecidos com %s.\n",value);
+			}
+
+		}
+		else if(validateSearch(nameTable,nameField,symbol) == 2){
+
+			if(strcmp(structTable[0][numField],"float") == 0 || strcmp(structTable[0][numField],"double") == 0){
+			
+				double numValue, num;
+				numValue = atof(value);
+
+				for(i = 0;i < numRegs;i++){
+					if(strcmp(symbol,">") == 0){				
+						num 	= atof(datas[i][numField]);
+						if(num > numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,">=") == 0){
+						num 	= atof(datas[i][numField]);
+						if(num >= numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,"<") == 0){
+						num 	= atof(datas[i][numField]);
+						if(num < numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,"<=") == 0){
+						num 	= atof(datas[i][numField]);
+						if(num <= numValue){
+							cont++;
+						}
+					}
+				}
+
+				if(cont > 0){
+
+					datasFiltered 	= (char ***)malloc(cont*sizeof(char **));
+
+					for(i = 0;i < cont;i++){
+						datasFiltered[i]  	= (char **)malloc(numFields*sizeof(char *));
+					}
+
+					for(i = 0;i < cont;i++){
+						for(j = 0;j < numFields;j++){
+							datasFiltered[i][j]  	= (char *)malloc(100*sizeof(char));
+						}
+					}
+
+					k = 0;
+				
+					for(i = 0;i < numRegs;i++){
+
+						if(strcmp(symbol,">") == 0){				
+							num 	= atof(datas[i][numField]);
+							if(num > numValue){
+								for(j = 0;j < numFields;j++){
+									datasFiltered[k][j] = datas[i][j];
+								}
+								k++;
+							}
+						}
+							
+						else if(strcmp(symbol,">=") == 0){
+							num 	= atof(datas[i][numField]);
+							if(num >= numValue){
+								for(j = 0;j < numFields;j++){
+									datasFiltered[k][j] = datas[i][j];
+								}
+								k++;	
+							}
+						}
+							
+						else if(strcmp(symbol,"<") == 0){
+							num 	= atof(datas[i][numField]);
+							if(num < numValue){
+								for(j = 0;j < numFields;j++){
+									datasFiltered[k][j] = datas[i][j];
+								}
+								k++;	
+							}
+						}
+							
+						else if(strcmp(symbol,"<=") == 0){
+							num 	= atof(datas[i][numField]);
+							if(num <= numValue){
+								for(j = 0;j < numFields;j++){
+									datasFiltered[k][j] = datas[i][j];
+								}
+								k++;	
+							}
+						}
+					}
+					return datasFiltered;
+				}
+				else{
+					printf("Não existem registros %s que %s.\n",symbol,value);
+				}		
+			}//FLOAT DOUBLE
+
+			else{
+				int numValue, num;
+				numValue 	= atoi(value);
+
+				for(i = 0;i < numRegs;i++){
+					if(strcmp(symbol,">") == 0){				
+						num 	= atoi(datas[i][numField]);
+						if(num > numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,">=") == 0){
+						num 	= atoi(datas[i][numField]);
+						if(num >= numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,"<") == 0){
+						num 	= atoi(datas[i][numField]);
+						if(num < numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,"<=") == 0){
+						num 	= atoi(datas[i][numField]);
+						if(num <= numValue){
+							cont++;
+						}
+					}
+				}
+
+				if(cont > 0){
+
+					datasFiltered 	= (char ***)malloc(cont*sizeof(char **));
+
+					for(i = 0;i < cont;i++){
+						datasFiltered[i]  	= (char **)malloc(numFields*sizeof(char *));
+					}
+
+					for(i = 0;i < cont;i++){
+						for(j = 0;j < numFields;j++){
+							datasFiltered[i][j]  	= (char *)malloc(100*sizeof(char));
+						}
+					}
+
+					k = 0;
+				
+					for(i = 0;i < numRegs;i++){
+
+						if(strcmp(symbol,">") == 0){				
+							num 	= atoi(datas[i][numField]);
+							if(num > numValue){
+								for(j = 0;j < numFields;j++){
+									datasFiltered[k][j] = datas[i][j];
+								}
+								k++;
+							}
+						}
+							
+						else if(strcmp(symbol,">=") == 0){
+							num 	= atoi(datas[i][numField]);
+							if(num >= numValue){
+								for(j = 0;j < numFields;j++){
+									datasFiltered[k][j] = datas[i][j];
+								}
+								k++;	
+							}
+						}
+							
+						else if(strcmp(symbol,"<") == 0){
+							num 	= atoi(datas[i][numField]);
+							if(num < numValue){
+								for(j = 0;j < numFields;j++){
+									datasFiltered[k][j] = datas[i][j];
+								}
+								k++;	
+							}
+						}
+							
+						else if(strcmp(symbol,"<=") == 0){
+							num 	= atoi(datas[i][numField]);
+							if(num <= numValue){
+								for(j = 0;j < numFields;j++){
+									datasFiltered[k][j] = datas[i][j];
+								}
+								k++;	
+							}
+						}
+					}
+					return datasFiltered;
+				}
+				else{
+					printf("Não existem registros %s que %s.\n",symbol,value);
+				}
+			}
+		}
+	}
 }
 
-int getNumregsFiltered(char *nameTable,char *nameField, char *value, char *option){
+int getNumregsFiltered(char *nameTable,char *nameField, char *value, char *symbol){
 
-	char ***datas;
+	char ***datas, ***structTable;
 	int i, numRegs, numField, cont;
 
 
+	structTable 	= getStructtable(nameTable);
 	datas 			= getDatastable(nameTable);
 	numRegs 		= getNumregs(nameTable);
 	numField 		= getNumfieldname(nameTable,nameField);
 	cont 			= 0;
 
-	if(option == NULL){
+	if(symbol == NULL){
 
 		for(i = 0;i < numRegs;i++){
 			if(strcmp(value,datas[i][numField]) == 0){
 				cont++;
+			}
+		}
+	}
+	else{
+		if(validateSearch(nameTable,nameField,symbol) == 1){
+			for(i = 0;i < numRegs;i++){
+				if(strstr(datas[i][numField],value) != NULL){
+					cont++;
+				}
+			}
+		}
+		else if(validateSearch(nameTable,nameField,symbol) == 2){
+
+			if(strcmp(structTable[0][numField],"float") == 0 || strcmp(structTable[0][numField],"double") == 0){
+			
+				double numValue, num;
+				numValue = atof(value);
+
+				for(i = 0;i < numRegs;i++){
+					if(strcmp(symbol,">") == 0){				
+						num 	= atof(datas[i][numField]);
+						if(num > numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,">=") == 0){
+						num 	= atof(datas[i][numField]);
+						if(num >= numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,"<") == 0){
+						num 	= atof(datas[i][numField]);
+						if(num < numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,"<=") == 0){
+						num 	= atof(datas[i][numField]);
+						if(num <= numValue){
+							cont++;
+						}
+					}
+				}
+			}
+			else{
+				int numValue, num;
+				numValue 	= atoi(value);
+
+				for(i = 0;i < numRegs;i++){
+					if(strcmp(symbol,">") == 0){				
+						num 	= atoi(datas[i][numField]);
+						if(num > numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,">=") == 0){
+						num 	= atoi(datas[i][numField]);
+						if(num >= numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,"<") == 0){
+						num 	= atoi(datas[i][numField]);
+						if(num < numValue){
+							cont++;
+						}
+					}
+					else if(strcmp(symbol,"<=") == 0){
+						num 	= atoi(datas[i][numField]);
+						if(num <= numValue){
+							cont++;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -784,7 +1152,7 @@ void showTables(){
 
 }
 
-void showLines(char *nameTable,int type,char *nameField,char *value,char *option){
+void showLines(char *nameTable,int type,char *nameField,char *value,char *symbol){
 
 	int i, j, numFields, numRegs, higher, len;
 	char ***regsORstruct;
@@ -809,6 +1177,12 @@ void showLines(char *nameTable,int type,char *nameField,char *value,char *option
 		higher 			= getBiggestvalue(nameTable);
 		numRegs 		= getNumregsFiltered(nameTable,nameField,value,NULL);
 	}
+	else if(type == 3){
+
+		regsORstruct 	= getSearchtable(nameTable,nameField,value,symbol);
+		higher 			= getBiggestvalue(nameTable);
+		numRegs 		= getNumregsFiltered(nameTable,nameField,value,symbol);
+	}
 
 	for(i = 0;i < numRegs;i++){
 
@@ -832,6 +1206,85 @@ void showLines(char *nameTable,int type,char *nameField,char *value,char *option
 		}
 		printf("\n");
 	}
+
+}
+
+void deleteReg(char *nameTable,char *primaryKey){
+
+	int numFields, numRegs, numField, higher, num ,cont, i, j, k;
+	char *local, *plocal, ***datas, *line, newLine[BUFSIZ], aux[BUFSIZ], pKey[100], lineAux[100];
+	FILE *file, *pfile;
+
+	higher 		= getBiggestvalue(nameTable);
+	local 		= generatorLocal(nameTable,"datas",0);
+	plocal 		= generatorLocal(nameTable,"datas",1);
+	datas 		= getDatastable(nameTable);
+	numFields 	= getNumfields(nameTable);
+	numRegs 	= getNumregs(nameTable);
+	numField 	= getNumfieldPrimaryKey(nameTable) - 1;
+
+	num 		= (higher+1)*numFields*numRegs;
+
+	line = malloc(num*sizeof(char));
+
+	cont = 0;
+
+	for (i = 0; i < numRegs;i++){
+		if(strcmp(primaryKey,datas[i][numField]) == 0){
+		
+		}
+		else{
+			for (j = 0; j < numFields;j++){
+
+				for(k = 0;k < strlen(datas[i][j]);k++){
+					line[cont] = datas[i][j][k];
+					cont++;
+				}
+				if(j == numFields - 1){
+					line[cont] = '\n';
+					cont++;
+				}
+				else{
+					line[cont] = '+';
+					cont++;
+				}		
+			}
+		}
+	}
+	file 	= fopen(local,"w");
+	fprintf(file,line);
+	fclose(file);
+
+	pfile 	= fopen(plocal,"r");
+
+	cont = 0;
+	while(fgets(aux, BUFSIZ, pfile) != NULL){
+		for (i = 0; i < strlen(aux);i++){
+			if(aux[i] == '\n'){
+				lineAux[i] = '\0';
+			}
+			else{
+				lineAux[i] = aux[i];
+			}		
+		}
+		if(strcmp(primaryKey,lineAux) == 0){
+
+		}
+		else{
+			if(cont == 0){
+				strcpy(newLine,aux);
+			}
+			else{
+				strcat(newLine,aux);
+			}
+		}
+		cont++;		
+	}
+	fclose(pfile);
+	
+	pfile 	= fopen(plocal,"w");
+	fprintf(pfile,newLine);
+	fclose(pfile);
 }
 
 int validateNametable(char *nameTable){
@@ -957,6 +1410,64 @@ int validatePrimaryKey(char *nameTable,unsigned primaryKey){
 
 }
 
+int validateSymbol(char *symbol){
+
+	int i;
+
+	if(strcmp(symbol,">") == 0 || strcmp(symbol,">=") == 0 || strcmp(symbol,"<") == 0 || strcmp(symbol,"<=") || strcmp(symbol,"~") == 0){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+
+}
+
+int validateSearch(char *nameTable, char *nameField, char* symbol){
+
+	char ***structTable;
+	int numField;
+
+	numField 		= getNumfieldname(nameTable,nameField);
+	structTable 	= getStructtable(nameTable);
+
+	if(strcmp(symbol,"~") == 0){
+		if(strcmp(structTable[0][numField],"string") == 0){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+	}
+	else{
+		if(strcmp(structTable[0][numField],"int") == 0 || strcmp(structTable[0][numField],"float") == 0 || strcmp(structTable[0][numField],"double") == 0){
+			return 2;
+		}
+		else{
+			return 0;
+		}
+	}
+
+}
+
+int validateValue(char *value,int type){
+
+	int i, len;
+
+	len 	= strlen(value);
+
+	if(type == 2){
+		for(i = 0;i < len;i++){
+			if(value[i] < '0' || value[i] > '9'){
+				return 0;
+			}
+		}
+	}
+
+	return 1;
+
+}
+
 int existeNamefield(char *nameTable, char *nameField){
 
 	char ***structTable;
@@ -972,6 +1483,7 @@ int existeNamefield(char *nameTable, char *nameField){
 	}
 
 	return 0;
+
 }
 
 int countDigits(int num){

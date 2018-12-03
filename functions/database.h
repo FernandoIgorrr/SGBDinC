@@ -9,6 +9,13 @@ typedef struct Tuple_t{
 
 }tuple;
 
+void deleteReg(char *nameTable,char *primaryKey);
+
+int validateValue(char *value,int type);
+
+int validateSearch(char *nameTable, char *nameField, char* symbol);
+
+int validateSymbol(char *symbol);
 
 int getNumregsFiltered(char *nameTable,char *nameField, char *value, char *option);
 

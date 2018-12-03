@@ -77,6 +77,23 @@ int getCommand(char *command){
 		executeCommand(cmd,quantidadeEspacos);
 
 	}
+	else if(quantidadeEspacos == 4){
+		char cmd[5][30];
+		k = 0;
+		for(i = 0; i < 5;i++){
+			for(j = 0; j < strlen(command);j++){
+				if(command[k] != ' '){
+					cmd[i][j] = command[k];
+				}
+				else{
+					cmd[i][j] = '\0';
+					j = strlen(command);
+				}
+				k++;
+			}
+		}
+		executeCommand(cmd,quantidadeEspacos);
+	}
 	else{
 		return 0;
 	}
