@@ -35,8 +35,27 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 				}
 			}
 		}
+		else if(strcmp(command[0],"remove") == 0){
+			if(validateNametable(command[1]) == 0){
+				
+				char *local, *elocal, *plocal;
+				FILE *file, *efile, *pfile;
+
+				local 	= generatorLocal(command[1],"tables",0);
+				elocal 	= generatorLocal(command[1],"datas",0);
+				plocal 	= generatorLocal(command[1],"datas",1);
+
+				remove(local);
+				remove(elocal);
+				remove(plocal);
+
+			}
+			else{
+				printf("A tabela não existe!\n");
+			}
+		}
 		else if(strcmp(command[0],"insert") == 0){
-			if(validateNametable(command[1]) == 0 && validateExisttable(command[1]) == 0){
+			if(validateNametable(command[1]) == 0){
 				insertData(command[1]);
 			}
 			else{

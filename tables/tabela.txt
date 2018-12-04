@@ -2,4 +2,4 @@ tabela
 4
 1
 int+string+float+int
-codigo+descricao+valor+quantidade
+id+descricao+valor+quantidade
