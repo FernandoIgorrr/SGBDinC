@@ -238,7 +238,7 @@ int createTable(char *nameTable){
 					file			= fopen(generatorLocal(nameTable,"tables",0),"w+");
 					fileData		= fopen(generatorLocal(nameTable,"datas",0),"w+");
 					pfileData		= fopen(generatorLocal(nameTable,"datas",1),"w+");
-
+					
 					fprintf(file,generatorText(nameTable,names,typeField,types,numFields,p));
 					fprintf(fileData,"");
 					fprintf(pfileData,"");
@@ -287,13 +287,13 @@ char *generatorText(char *name,char **names,char *type,char **types,int numField
 	
 		int i;
 		char *text,*aux;
-		char cprimaryKey[2], cnumFields[2];
+		char cprimaryKey[3], cnumFields[3];
 		
 		text	= malloc(sizeof(char)*strlen(name)+1+sizeof(char)*2*6*numFields+sizeof(char)*30*numFields);
 		aux		= malloc(sizeof(char)*6+2);
 
-		snprintf(cprimaryKey,2,"%d",primaryKey);
-		snprintf(cnumFields,2,"%d",numFields);
+		snprintf(cprimaryKey,3,"%d",primaryKey);
+		snprintf(cnumFields,3,"%d",numFields);
 
 		strcpy(text,name);
 		strcat(text,"\n");
@@ -389,6 +389,7 @@ char **getTables(){
 	return tables;
 
 }
+
 char **getTablesdata(){
 
 	char	**tablesData;
@@ -442,7 +443,6 @@ int getNumtablesdata(){
 		return (numTablesdata-2)/2;
 	}
 }
-
 
 int getNumfields(char *nameTable){
 	
@@ -807,7 +807,7 @@ char ***getSearchtable(char *nameTable,char *nameField, char *value, char *symbo
 
 			else{
 				int numValue, num;
-				numValue 	= atoi(value);
+				numValue 	= (int)atof(value);
 
 				for(i = 0;i < numRegs;i++){
 					if(strcmp(symbol,">") == 0){				
@@ -1121,10 +1121,33 @@ int insertData(char *nameTable){
 				}
 			}
 			else{
-				printf("Digite o valor do campo %s:",structTable[1][i]);
-				scanf("%[^\n]s",t.line[i]);
+				printf("Digite o valor do campo %s (%s):",structTable[1][i],structTable[0][i]);
+				if(strcmp(structTable[0][i],"char") == 0){
+					char c;
+					scanf("%c",&c);
+					getchar();
+					t.line[i][0] = c;
+					t.line[i][1] = '\0';
+				}
+				else if(strcmp(structTable[0][i],"int") == 0){
+					unsigned int num;
+					scanf("%d",&num);
+					sprintf(t.line[i],"%d",num);
+				}
+				else if(strcmp(structTable[0][i],"float") == 0){
+					float num;
+					scanf("%f",&num);
+					sprintf(t.line[i],"%f",num);
+				}
+				else if(strcmp(structTable[0][i],"double") == 0){
+					double num;
+					scanf("%lf",&num);
+					sprintf(t.line[i],"%lf",num);
+				}
+				else{
+					scanf("%[^\n]s",t.line[i]);
+				}
 			}
-			
 		}
 
 		char sprimaryKey[countDigits(t.primaryKey)+1];
@@ -1477,7 +1500,13 @@ int validateValue(char *value,int type){
 
 	if(type == 2){
 		for(i = 0;i < len;i++){
-			if(value[i] < '0' || value[i] > '9'){
+			if(value[0] < '0' || value[0] > '9'){
+				return 0;
+			}
+			else if(value[len-1] < '0' || value[len-1] > '9'){
+				return 0;
+			}
+			else if((value[i] < '0' || value[i] > '9') && value[i] != '.'){
 				return 0;
 			}
 		}
