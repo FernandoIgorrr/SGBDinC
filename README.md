@@ -34,7 +34,7 @@ Como compilar o projeto:
  - Copie o projeto para seu computador com o comando:
 		`git clone https://github.com/FernandoIgorrr/SGBDinC.git`
  - Ou baixe pelo link:
-		`https://github.com/FernandoIgorrr/SGBDinC/archive/master.zip
+		https://github.com/FernandoIgorrr/SGBDinC/archive/master.zip
  - Navegue até a pasta chamada "main" do projeto;
  - Digite exatamente o comando abaixo:
 		`gcc -c ../functions/man.c ../functions/command.c ../functions/database.c`
