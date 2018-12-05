@@ -5,6 +5,8 @@
 #include <string.h>
 #include <dirent.h>
 
+// FUNÇAO PARA EXECUTAR COMANDO QUE VEM DO DETERMINAL
+
 int executeCommand(char command[][30],int quantidadeEspacos){
 
 	if(quantidadeEspacos == 0){
@@ -163,6 +165,8 @@ int executeCommand(char command[][30],int quantidadeEspacos){
 
 }
 
+// FUNÇAO PARA CRIAR TABELA
+
 int createTable(char *nameTable){
 
 	int i, numFields, close, validate, p;
@@ -262,6 +266,8 @@ int createTable(char *nameTable){
 	}
 
 }
+
+// FUNÇOES GENERATOR's, QUE GERAM STRINGS DE LOCAIS, DADOS OU ESTRUTURAS DE TABELAS PARA SEREM SALVAS NOS ARQUIVOS
 
 char *generatorLocal(char *name,char locale[],int arg){
 	
@@ -363,6 +369,9 @@ char *generatorData(tuple t, char *nameTable){
 	}
 	return data;
 }
+
+// TODAS AS FUNÇOES GET's //
+// ELAS PEGAM DADOS DOS ARQUIVOS //
 
 char **getTables(){
 
@@ -1088,6 +1097,8 @@ int getBiggestvalue(char *nameTable){
 	
 }
 
+// FUNÇAO PARA INSERIR DADOS NO ARQUIVO //
+
 int insertData(char *nameTable){
 		
 	if(validateNametable(nameTable) == 0){
@@ -1180,6 +1191,8 @@ int insertData(char *nameTable){
 
 }
 
+// FUNÇAO PARA MOSTRAR AS TABELAS //
+
 void showTables(){
 
 	int i, n;
@@ -1193,6 +1206,8 @@ void showTables(){
 	}
 
 }
+
+// FUNÇAO PARA MOSTRAR ARRAYS DE DADOS (QUALQUER QUE SEJA O ARRAY) //
 
 void showLines(char *nameTable,int type,char *nameField,char *value,char *symbol){
 
@@ -1250,6 +1265,8 @@ void showLines(char *nameTable,int type,char *nameField,char *value,char *symbol
 	}
 
 }
+
+// FUNÇAO PARA DELETAR DADO DO ARQUIVO
 
 void deleteReg(char *nameTable,char *primaryKey){
 
@@ -1328,6 +1345,8 @@ void deleteReg(char *nameTable,char *primaryKey){
 	fprintf(pfile,newLine);
 	fclose(pfile);
 }
+
+// FUNÇAOES PARA VALIDAÇAO E TRATAMENTO DE DADOS //
 
 int validateNametable(char *nameTable){
 
