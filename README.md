@@ -32,22 +32,19 @@ Como compilar o projeto:
  - Instale o compilador gcc; 
  - Instale o git;
  - Copie o projeto para seu computador com o comando:
-		"git clone https://github.com/FernandoIgorrr/SGBDinC.git"
+		`git clone https://github.com/FernandoIgorrr/SGBDinC.git`
  - Ou baixe pelo link:
-		"https://github.com/FernandoIgorrr/SGBDinC/archive/master.zip"
+		`https://github.com/FernandoIgorrr/SGBDinC/archive/master.zip
  - Navegue até a pasta chamada "main" do projeto;
  - Digite exatamente o comando abaixo:
-		"gcc -c ../functions/man.c ../functions/command.c ../functions/database.c"
+		`gcc -c ../functions/man.c ../functions/command.c ../functions/database.c`
  - Logo, digite este outro comando:
-		"gcc main.c man.o command.o database.o -o main" 
+		`gcc main.c man.o command.o database.o -o main`
  - Agora, apenas digite:
  - Caso for Linux: 
-		"./main"
+		`./main`
  - Caso for Winsdows:
-		"main"
+		`main`
  - Obs.: Não apague nenhuma pasta do projeto mesmo que ela esteja vazia.
 
  - No projeto foram ultilizadas as bibliotecas <stdio.h> <stdlib.h> <string.h> <dirent.h> e o github.
-
- - No projeto foram ultilizadas as bibliotas <string.h> <stdlib.h> <stdio.h>
-
