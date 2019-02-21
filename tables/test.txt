@@ -1,5 +1,1 @@
-test
-5
-1
-int+string+char+float+double
-id+name+sexo+nota+media
+a

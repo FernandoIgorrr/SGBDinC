@@ -1,5 +1,0 @@
-objeto
-1
-1
-int+string+char+float+double+string+int+int+string+double
-id+nome+sexo+nota+media+descricao+codSala+codTurma+observacao+num

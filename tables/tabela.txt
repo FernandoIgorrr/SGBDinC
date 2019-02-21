@@ -1,5 +1,0 @@
-tabela
-4
-1
-int+string+float+int
-id+descricao+valor+quantidade
